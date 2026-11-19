@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Adjectives and Adverbs</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1f2430;--mut:#5d6578;--pri:#4f6df5;--ok:#1e9e5a;--okbg:#e4f6ec;--bad:#d63c3c;--badbg:#fdeaea;--bd:#dfe3ee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171f;--card:#1e222d;--tx:#eceff6;--mut:#a3abc0;--pri:#7d93ff;--ok:#4cd08a;--okbg:#17342a;--bad:#ff7b7b;--badbg:#3a2022;--bd:#343a4a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#14171f;--card:#1e222d;--tx:#eceff6;--mut:#a3abc0;--pri:#7d93ff;--ok:#4cd08a;--okbg:#17342a;--bad:#ff7b7b;--badbg:#3a2022;--bd:#343a4a;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:720px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;margin:.2em 0}
+.sub{color:var(--mut);margin:0 0 18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.tab{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:9px 14px;border-radius:999px;font:inherit;font-size:.95rem;cursor:pointer}
+.tab.on{background:var(--pri);color:#fff;border-color:var(--pri)}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:14px}
+.rule{display:grid;gap:10px}
+.box{border-radius:12px;padding:12px 14px;background:var(--bg);border:1px solid var(--bd)}
+.en{font-weight:600}
+.hl-a{background:#ffe48a;color:#222;border-radius:4px;padding:0 4px}
+.hl-d{background:#a9e3c0;color:#222;border-radius:4px;padding:0 4px}
+.q{font-size:1.15rem;font-weight:600;margin:0 0 12px}
+.opts{display:flex;flex-wrap:wrap;gap:10px}
+.opt{flex:1 1 140px;border:2px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:12px;font:inherit;font-weight:600;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--pri)}
+.opt.ok{border-color:var(--ok);background:var(--okbg)}
+.opt.bad{border-color:var(--bad);background:var(--badbg)}
+.opt:disabled{cursor:default}
+.fb{margin-top:12px;border-radius:12px;padding:11px 14px;font-size:.97rem}
+.fb.ok{background:var(--okbg)}
+.fb.bad{background:var(--badbg)}
+.prog{height:8px;background:var(--bd);border-radius:99px;overflow:hidden;margin-bottom:14px}
+.prog i{display:block;height:100%;background:var(--pri);width:0;transition:width .3s}
+.btn{border:0;background:var(--pri);color:#fff;border-radius:12px;padding:12px 20px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+.score{font-size:2rem;font-weight:700;margin:0}
+.mist{border-left:4px solid var(--bad);padding:6px 12px;margin:12px 0;background:var(--badbg);border-radius:0 10px 10px 0}
+.mist small{display:block;color:var(--mut)}
+</style>
+</head>
+<body>
+<main>
+<h1>📘 Adjectives &amp; Adverbs</h1>
+<p class="sub">Прилагательные и наречия. Выбирай ответ — сразу увидишь, правильно ли, и почему.</p>
+<div class="tabs" id="tabs"></div>
+<div id="view"></div>
+</main>
+<script>
+const parts=[
+{id:"rules",title:"1. Правило"},
+{id:"p1",title:"2. Прилагательное или наречие?",
+ intro:"Выбери слово, которое подходит в предложение.",
+ qs:[
+ ["She is a ___ girl.",["beautiful","beautifully"],0,"Слово стоит перед существительным <b>girl</b> и описывает его (какая девочка?). Значит, нужно прилагательное: <b>beautiful</b>."],
+ ["She sings ___.",["beautiful","beautifully"],1,"Слово стоит после глагола <b>sings</b> и показывает, как она поёт. Значит, нужно наречие: <b>beautifully</b>."],
+ ["He is a ___ driver.",["careful","carefully"],0,"После <b>a</b> и перед существительным <b>driver</b> нужно прилагательное: <b>careful</b> (какой водитель?)."],
+ ["He drives ___.",["careful","carefully"],1,"Слово идёт после глагола <b>drives</b> и отвечает на вопрос «как?». Нужно наречие: <b>carefully</b>."],
+ ["The ___ dog runs in the park.",["quick","quickly"],0,"Слово стоит перед существительным <b>dog</b>. Нужно прилагательное: <b>quick</b>."],
+ ["The dog runs ___.",["quick","quickly"],1,"После глагола <b>runs</b> нужно наречие (как бежит?): <b>quickly</b>."],
+ ["She plays the piano ___.",["good","well"],1,"Слово после глагола <b>plays</b>, значит наречие. Наречие от <b>good</b> — особое слово <b>well</b>."],
+ ["They speak ___.",["loud","loudly"],1,"Слово после глагола <b>speak</b> отвечает на вопрос «как?». Нужно наречие: <b>loudly</b>."]
+ ]},
+{id:"p2",title:"3. Сравнения: прилагательные",
+ intro:"Выбери правильную форму прилагательного.",
+ qs:[
+ ["My bag is ___ than your bag.",["heavier","more heavy","heavyer"],0,"<b>heavy</b> — короткое прилагательное. Для сравнения добавляем <b>-er</b>, а <b>y</b> меняется на <b>i</b>: heavy → <b>heavier</b>."],
+ ["This book is ___ than that one.",["interestinger","more interesting","most interesting"],1,"<b>interesting</b> — длинное слово (3+ слога). Для сравнения ставим <b>more</b> перед ним. <b>most</b> — это превосходная степень, а здесь есть <b>than</b>."],
+ ["Mount Everest is the ___ mountain in the world.",["higher","most high","highest"],2,"Сравниваем с целым миром, поэтому нужна превосходная степень. Короткое слово: <b>the + high + est</b> = the <b>highest</b>."],
+ ["Tom is ___ than me at maths.",["gooder","more good","better"],2,"<b>good</b> — исключение. Его формы нужно запомнить: good → <b>better</b> → the best."],
+ ["This is the ___ film I have ever seen.",["beautifulest","more beautiful","most beautiful"],2,"После <b>the</b> и слов «из всех» нужна превосходная степень. Длинное слово: the <b>most beautiful</b>."]
+ ]},
+{id:"p3",title:"4. Сравнения: наречия",
+ intro:"Выбери правильную форму наречия.",
+ qs:[
+ ["Tom runs ___ than Max.",["fastest","faster","more fast"],1,"<b>fast</b> — короткое наречие, а в предложении есть <b>than</b> (сравнение двух). Добавляем <b>-er</b>: <b>faster</b>."],
+ ["Anna speaks ___ than Kate.",["quietlier","most quietly","more quietly"],2,"Наречие <b>quietly</b> заканчивается на <b>-ly</b>, поэтому ставим <b>more</b>: <b>more quietly</b>. Форма <b>most</b> нужна для превосходной степени."],
+ ["She reads ___ of all in the class.",["the most carefully","more carefully","carefullier"],0,"Слова «of all» — это превосходная степень. Для наречий на -ly: <b>the most carefully</b>."],
+ ["He drives ___ than his dad.",["more careful","more carefully","carefulier"],1,"Слово после глагола <b>drives</b> — наречие, а не прилагательное. Значит, <b>more carefully</b>, а не more careful."],
+ ["Sam jumps ___ in the team.",["higher","the most high","the highest"],2,"«In the team» — это превосходная степень. Короткое наречие <b>high</b>: <b>the highest</b>."]
+ ]}
+];
+const tabs=document.getElementById("tabs"),view=document.getElementById("view");
+let cur=0,st={};
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function drawTabs(){tabs.innerHTML="";parts.forEach((p,i)=>{const b=document.createElement("button");b.className="tab"+(i==cur?" on":"");b.textContent=p.title;b.onclick=()=>{cur=i;draw()};tabs.appendChild(b)})}
+function draw(){drawTabs();const p=parts[cur];if(p.id=="rules")return rules();start(p)}
+function rules(){view.innerHTML=`<div class="card rule">
+<h2 style="margin:0">Как не ошибиться?</h2>
+<div class="box"><b>Прилагательное</b> (adjective) описывает <b>существительное</b>. Оно отвечает на вопрос «какой?» и стоит <b>перед существительным</b> или после <i>is / am / are</i>.<br><span class="en">a <span class="hl-a">big</span> dog &nbsp;|&nbsp; The dog is <span class="hl-a">big</span>.</span></div>
+<div class="box"><b>Наречие</b> (adverb) описывает <b>глагол</b>. Оно отвечает на вопрос «как?» и обычно стоит <b>после глагола</b>. Часто оно образуется так: прилагательное + <b>-ly</b>.<br><span class="en">She runs <span class="hl-d">quickly</span>. &nbsp;|&nbsp; slow → slowly</span></div>
+<div class="box"><b>Исключения:</b> good → <b>well</b> (She plays <span class="hl-d">well</span>). Слова fast и hard — одинаковые у прилагательного и наречия.</div>
+<div class="box"><b>Степени сравнения.</b><br>Короткие слова: fast → <b>faster</b> → the <b>fastest</b>.<br>Длинные слова и наречия на -ly: <b>more</b> careful(ly) → the <b>most</b> careful(ly).<br></div><div class="box"><b>Исключения (особые формы, их нужно запомнить):</b><br>good → <b>better</b> → the <b>best</b> (хороший)<br>bad → <b>worse</b> → the <b>worst</b> (плохой)<br>far → <b>farther</b> → the <b>farthest</b> (далёкий)<br>little → <b>less</b> → the <b>least</b> (маленький по количеству)<br>many / much → <b>more</b> → the <b>most</b> (много)<br><span class="en">Не говорим: gooder, more good, badder ❌</span></div><div class="box"><b>Правописание:</b> big → bigger → the biggest (удваиваем букву); happy → happier → the happiest (<i>y</i> меняется на <i>i</i>); nice → nicer → the nicest (добавляем только <i>r</i> / <i>st</i>).</div>
+<button class="btn" onclick="cur=1;draw()">Начать упражнения →</button></div>`}
+function start(p){st={i:0,ans:[],qs:p.qs.map(q=>({t:q[0],o:shuffle(q[1].map((x,k)=>[x,k])),c:q[2],w:q[3]}))};show(p)}
+function show(p){
+ const s=st,n=s.qs.length;
+ if(s.i>=n)return result(p);
+ const q=s.qs[s.i];
+ view.innerHTML=`<div class="prog"><i style="width:${s.i/n*100}%"></i></div><div class="card"><p class="sub" style="margin-bottom:6px">${p.intro} (${s.i+1} из ${n})</p><p class="q">${q.t.replace("___","<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>")}</p><div class="opts" id="o"></div><div id="f"></div></div>`;
+ const o=document.getElementById("o");
+ q.o.forEach(([txt,k])=>{const b=document.createElement("button");b.className="opt";b.textContent=txt;b.onclick=()=>pick(p,q,k,b);o.appendChild(b)});
+}
+function pick(p,q,k,btn){
+ const ok=k===q.c;
+ [...document.querySelectorAll(".opt")].forEach((b,idx)=>{b.disabled=true;if(q.o[idx][1]===q.c)b.classList.add("ok")});
+ if(!ok)btn.classList.add("bad");
+ st.ans.push({q,ok,chosen:q.o.find(x=>x[1]===k)[0]});
+ document.getElementById("f").innerHTML=`<div class="fb ${ok?"ok":"bad"}">${ok?"✅ <b>Верно!</b>":"❌ <b>Ошибка.</b>"} ${q.w}</div><button class="btn" id="nx">${st.i+1<st.qs.length?"Дальше →":"Результат"}</button>`;
+ document.getElementById("nx").onclick=()=>{st.i++;show(p)};
+}
+function result(p){
+ const total=st.ans.length,good=st.ans.filter(a=>a.ok).length,bad=st.ans.filter(a=>!a.ok);
+ const msg=good==total?"Отлично! Без ошибок 🎉":good>=total*0.6?"Хороший результат! Посмотри ошибки ниже.":"Попробуй ещё раз, ты справишься 💪";
+ let h=`<div class="card"><p class="score">${good} / ${total}</p><p>${msg}</p>`;
+ if(bad.length){h+=`<h3>Работа над ошибками</h3>`;bad.forEach(a=>{h+=`<div class="mist"><b>${a.q.t.replace("___","<u>"+a.q.o.find(x=>x[1]===a.q.c)[0]+"</u>")}</b><small>Твой ответ: ${a.chosen}</small>${a.q.w}</div>`})}
+ h+=`<button class="btn" onclick="start(parts[${cur}])">Ещё раз ↻</button> `;
+ if(cur<parts.length-1)h+=`<button class="btn" onclick="cur++;draw()">Следующее задание →</button>`;
+ view.innerHTML=h+"</div>";
+}
+draw();
+</script>
+</body>
+</html>
